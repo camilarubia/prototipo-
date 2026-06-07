@@ -1,2 +1,0 @@
-# prototipo-
-protitipo casa moneda
