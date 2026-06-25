@@ -3,890 +3,478 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Casa Moneda Digital · Certificado + Pago Transbank</title>
+<title>MonedaViva · Casa Moneda de Chile</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-  /* ─────────────────────────────────────────────
-     VARIABLES Y RESET
-  ───────────────────────────────────────────── */
-  :root {
-    --gold: #B8860B;
-    --gold-lt: #D4A017;
-    --dark: #1E1E1C;
-    --dark2: #2C2C2A;
-    --bg: #F8F7F4;
-    --bg2: #EFEDE8;
-    --text: #1E1E1C;
-    --text2: #5F5E5A;
-    --border: rgba(0,0,0,0.12);
-    --border2: rgba(0,0,0,0.22);
-    --radius: 10px;
-    --radius-lg: 14px;
-    --green-bg: #EAF3DE;
-    --green-text: #3B6D11;
-    --green-border: #97C459;
-    --blue-bg: #E6F1FB;
-    --blue-text: #185FA5;
-    --blue-border: #85B7EB;
-    --amber-bg: #FAEEDA;
-    --amber-text: #633806;
-    --amber-border: #FAC775;
-  }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:       #0B1F3A;
+  --navy2:      #122847;
+  --navy3:      #1A3A5C;
+  --navy-light: #2E6DA4;
+  --white:      #FFFFFF;
+  --off-white:  #F4F7FB;
+  --soft:       #E8EEF6;
+  --soft2:      #D4E1F0;
+  --gold:       #C9A84C;
+  --gold-lt:    #E2C06A;
+  --text:       #0B1F3A;
+  --text2:      #3A5070;
+  --text3:      #6B87A8;
+  --radius:      10px;
+  --radius-lg:  16px;
+  --green-bg:#EAF3DE;--green-text:#2E6B0F;
+  --tag-new-bg:#E6F1FB;--tag-new-text:#0C447C;--tag-new-border:#85B7EB;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,sans-serif;background:var(--off-white);color:var(--text);line-height:1.65}
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #1A1A18;
-      --bg2: #242422;
-      --text: #F0EEE8;
-      --text2: #888780;
-      --border: rgba(255,255,255,0.10);
-      --border2: rgba(255,255,255,0.22);
-    }
-  }
+/* NAV TAB */
+.site-header{background:var(--navy);position:sticky;top:0;z-index:100;border-bottom:3px solid var(--gold)}
+.nav-inner{max-width:1140px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:66px}
+.logo-wrap{display:flex;align-items:center;gap:13px}
+.logo-coin{width:40px;height:40px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#F7E48A,var(--gold) 55%,#7A5800);border:2px solid var(--gold-lt);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#3A2800;text-align:center}
+.logo-text strong{display:block;font-size:18px;font-weight:800;color:var(--white)}
+.logo-text span{font-size:10px;color:var(--gold-lt);text-transform:uppercase;letter-spacing:.1em}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+.main-nav-tabs{display:flex;justify-content:center;background:var(--navy2);border-bottom:2px solid var(--gold)}
+.main-tab{padding:12px 24px;color:rgba(255,255,255,0.7);font-weight:700;font-size:14px;cursor:pointer}
+.main-tab.active{color:var(--gold-lt);border-bottom:3px solid var(--gold-lt);background:var(--navy3)}
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 2rem 1rem;
-  }
+/* HERO & SECCIONES */
+.hero{background:var(--navy);padding:3rem 1.5rem 1.5rem;text-align:center;color:var(--white)}
+.hero h1{font-size:2.2rem;font-weight:800;margin-bottom:0.5rem}
+.hero p{color:rgba(255,255,255,0.6);font-size:14px}
 
-  .app { width: 100%; max-width: 480px; }
+.view-section{display:none;padding:2rem 1.5rem;max-width:1140px;margin:0 auto}
+.view-section.active{display:block}
 
-  /* ─────────────────────────────────────────────
-     PANTALLA ACTIVA
-  ───────────────────────────────────────────── */
-  .screen { display: none; }
-  .screen.active { display: block; animation: fadeIn 0.2s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+/* CATÁLOGO */
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:2rem}
+.prod-card{background:var(--white);border:1.5px solid var(--soft2);border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s}
+.prod-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(11,31,58,0.12)}
+.prod-img{height:240px;background:var(--soft);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.prod-img img{width:100%;height:100%;object-fit:contain;background:#000}
+.prod-tag{position:absolute;top:12px;right:12px;font-size:10px;padding:4px 10px;border-radius:20px;font-weight:700;z-index:10;background:var(--tag-new-bg);color:var(--tag-new-text);border:1px solid var(--tag-new-border)}
+.prod-info{padding:1.5rem;flex-grow:1}
+.prod-info h3{font-size:17px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.prod-info p{font-size:13px;color:var(--text2);margin-bottom:1rem;height:45px;overflow:hidden}
+.prod-qr-status{font-size:11px;font-weight:700;color:var(--green-text);background:var(--green-bg);padding:5px 10px;border-radius:6px;display:inline-flex;align-items:center;gap:6px;margin-bottom:1rem}
+.prod-footer{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--soft);padding-top:1rem}
+.prod-price{font-size:20px;font-weight:800;color:var(--navy)}
+.btn-ver{font-size:13px;font-weight:700;color:var(--navy-light);border:1.5px solid var(--soft2);background:transparent;border-radius:var(--radius);padding:8px 16px}
 
-  /* ─────────────────────────────────────────────
-     TIPOGRAFÍA UTILITARIA
-  ───────────────────────────────────────────── */
-  .lbl {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: .07em;
-    color: var(--text2);
-    margin-bottom: 5px;
-    display: block;
-  }
+/* FORMULARIOS VENDER */
+.form-card{background:var(--white);border:1.5px solid var(--soft2);border-radius:var(--radius-lg);padding:2rem;max-width:600px;margin:0 auto}
+.f-lbl{font-size:11.5px;text-transform:uppercase;color:var(--navy);font-weight:700;display:block;margin-bottom:6px}
+.f-inp{width:100%;padding:11px 13px;border-radius:var(--radius);border:1.5px solid var(--soft2);font-size:13.5px;margin-bottom:1.2rem;color:var(--navy)}
+.f-txt{width:100%;height:80px;padding:11px 13px;border-radius:var(--radius);border:1.5px solid var(--soft2);font-size:13.5px;margin-bottom:1.2rem;font-family:inherit}
 
-  /* ─────────────────────────────────────────────
-     BOTONES
-  ───────────────────────────────────────────── */
-  .btn-dark {
-    background: var(--dark2);
-    color: var(--gold-lt);
-    border: 1px solid var(--gold-lt);
-    padding: 11px 24px;
-    border-radius: var(--radius);
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: opacity .15s;
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-  }
-  .btn-dark:hover { opacity: .82; }
+/* TRAZABILIDAD QR SCAN */
+.scan-container{max-width:700px;margin:0 auto;background:var(--white);border:1.5px solid var(--soft2);border-radius:var(--radius-lg);overflow:hidden}
+.scan-header{background:var(--green-bg);color:var(--green-text);padding:1rem 1.5rem;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.scan-body{padding:2rem}
+.timeline{margin-top:1.5rem;padding-left:1rem;border-left:2px solid var(--soft2)}
+.timeline-item{position:relative;margin-bottom:1.5rem}
+.timeline-item::before{content:'';position:absolute;left:-15px;top:4px;width:8px;height:8px;border-radius:50%;background:var(--navy-light)}
+.timeline-title{font-size:13.5px;font-weight:700;color:var(--navy)}
+.timeline-date{font-size:11px;color:var(--text3)}
+.timeline-desc{font-size:12.5px;color:var(--text2)}
 
-  .btn-sec {
-    flex: 1;
-    min-width: 120px;
-    padding: 10px 12px;
-    border-radius: var(--radius);
-    border: 1px solid var(--border2);
-    background: var(--bg);
-    font-size: 13px;
-    cursor: pointer;
-    color: var(--text);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    transition: background .15s;
-  }
-  .btn-sec:hover { background: var(--bg2); }
+/* MODAL INTERACTIVO */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(5,15,30,0.85);align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--white);border-radius:var(--radius-lg);width:100%;max-width:520px;box-shadow:0 24px 80px rgba(0,0,0,0.3);overflow:hidden;margin:auto}
+.proto-screen{display:none;padding:1.5rem}
+.proto-screen.active{display:block}
+.m-head{background:var(--navy);padding:1.25rem;display:flex;align-items:center;justify-content:space-between;color:var(--white)}
+.m-badge{font-size:11px;color:var(--gold-lt);font-weight:700;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.live-dot{width:8px;height:8px;border-radius:50%;background:#4CAF50}
+.m-close{background:none;border:none;color:white;font-size:24px;cursor:pointer}
+.coin-row{display:flex;gap:1.2rem;align-items:center;margin-bottom:1rem}
+.cert-vis-img{width:110px;height:75px;border-radius:4px;overflow:hidden;border:1px solid var(--soft2);background:#000}
+.cert-vis-img img{width:100%;height:100%;object-fit:contain}
+.cert-info h2{font-size:16px;font-weight:700}
+.tag-auth{font-size:11px;background:var(--green-bg);color:var(--green-text);padding:3px 10px;border-radius:20px;font-weight:700;display:inline-block;margin-top:4px}
+.divider{border:none;border-top:1px solid var(--soft);margin:1rem 0}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem}
+.dcell{background:var(--off-white);padding:10px;border-radius:var(--radius);border:1px solid var(--soft2)}
+.dcell .l{color:var(--text3);font-size:10px;text-transform:uppercase;font-weight:600}
+.dcell .v{font-weight:700;color:var(--navy);font-size:13px}
+.radio-group{display:flex;flex-direction:column;gap:10px;margin-bottom:1.5rem}
+.radio-box{border:1.5px solid var(--soft2);border-radius:var(--radius);padding:12px;display:flex;gap:12px;cursor:pointer;background:var(--off-white)}
+.radio-box.active{border-color:var(--navy);background:var(--white)}
+.radio-txt h4{font-size:13px;font-weight:700;color:var(--navy)}
+.radio-txt p{font-size:11.5px;color:var(--text3)}
+.mtabs{display:flex;gap:6px;margin-bottom:1.2rem}
+.mtab{flex:1;padding:11px 6px;border-radius:var(--radius);border:1.5px solid var(--soft2);background:var(--off-white);font-size:12px;font-weight:700;cursor:pointer;text-align:center}
+.mtab.active{border-color:var(--navy);background:var(--navy);color:var(--gold-lt)}
+.card-wrapper{background:#F0F4F9;border:1.5px solid var(--soft2);border-radius:var(--radius);padding:1.25rem;margin-bottom:1.2rem}
+.card-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.method-desc{font-size:12.5px;color:var(--text2);background:#F0F4F9;padding:12px;border-radius:var(--radius);margin-bottom:1.2rem;display:none}
+.method-desc.active{display:block}
+.btn-confirm{width:100%;padding:13px;border-radius:var(--radius);background:var(--navy);color:var(--gold-lt);border:none;font-size:14.5px;font-weight:800;cursor:pointer}
+.proc-wrap{padding:4rem 1.5rem;text-align:center}
+.spinner{width:48px;height:48px;border:4px solid var(--soft2);border-top-color:var(--navy);border-radius:50%;margin:0 auto 1.5rem;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ok-wrap{padding:3rem 1.5rem;text-align:center}
+.ok-circle{width:64px;height:64px;border-radius:50%;background:var(--green-bg);margin:0 auto 1.5rem;display:flex;align-items:center;justify-content:center;color:var(--green-text);font-size:24px;font-weight:bold}
+.ok-folio{font-family:monospace;font-size:12px;background:var(--off-white);padding:10px;border-radius:var(--radius);border:1px solid var(--soft2);margin:1rem auto;max-width:300px}
+.btn-pdf{padding:13px 26px;border-radius:var(--radius);background:var(--navy);color:var(--gold-lt);font-size:14.5px;font-weight:800;border:none;cursor:pointer;margin-top:1rem}
+.pdf-toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--gold-lt);padding:11px 22px;border-radius:var(--radius);font-size:13px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none}
+.pdf-toast.show{opacity:1}
 
-  .btn-gold {
-    flex: 1;
-    min-width: 120px;
-    padding: 10px 12px;
-    border-radius: var(--radius);
-    border: 1px solid var(--gold-lt);
-    background: var(--dark2);
-    font-size: 13px;
-    cursor: pointer;
-    color: var(--gold-lt);
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    transition: opacity .15s;
-  }
-  .btn-gold:hover { opacity: .82; }
-
-  .confirm-btn {
-    width: 100%;
-    padding: 12px;
-    border-radius: var(--radius);
-    background: var(--dark2);
-    color: var(--gold-lt);
-    border: 1px solid var(--gold-lt);
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: opacity .15s;
-  }
-  .confirm-btn:hover { opacity: .82; }
-
-  /* ─────────────────────────────────────────────
-     PANTALLA 1 — QR
-  ───────────────────────────────────────────── */
-  .qr-wrap {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 2.5rem 1.5rem;
-    text-align: center;
-  }
-
-  .qr-frame {
-    width: 160px;
-    height: 160px;
-    margin: 0 auto 1.5rem;
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .qr-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 3px;
-    padding: 16px;
-    width: 100%;
-    height: 100%;
-  }
-  .qr-grid span { border-radius: 1px; background: #1E1E1C; }
-
-  .scan-bar {
-    position: absolute;
-    left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #D4A017, transparent);
-    animation: scan 1.8s ease-in-out forwards;
-  }
-  @keyframes scan { 0% { top: 10%; } 60% { top: 85%; } 100% { top: 85%; opacity: 0; } }
-
-  .qr-title { font-size: 18px; font-weight: 500; margin-bottom: .4rem; color: var(--text); }
-  .qr-sub { font-size: 13px; color: var(--text2); margin-bottom: 1.5rem; }
-
-  /* ─────────────────────────────────────────────
-     PANTALLA 2 — VERIFICANDO
-  ───────────────────────────────────────────── */
-  .verify-wrap {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 3rem 1.5rem;
-    text-align: center;
-  }
-
-  .spinner {
-    width: 48px; height: 48px;
-    border: 3px solid var(--border);
-    border-top-color: var(--gold-lt);
-    border-radius: 50%;
-    margin: 0 auto 1.5rem;
-    animation: spin .8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .vsteps { list-style: none; text-align: left; max-width: 280px; margin: 1.25rem auto 0; }
-  .vsteps li {
-    font-size: 13px; color: var(--text2); padding: 7px 0;
-    display: flex; align-items: center; gap: 9px;
-    border-bottom: 1px solid var(--border);
-    transition: color .3s;
-  }
-  .vsteps li:last-child { border-bottom: none; }
-  .vsteps li.done { color: var(--text); }
-  .vsteps li .step-ico { width: 20px; text-align: center; }
-
-  /* ─────────────────────────────────────────────
-     PANTALLA 3 — CERTIFICADO
-  ───────────────────────────────────────────── */
-  .cert-head {
-    background: var(--dark2);
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-    padding: 1rem 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .cert-badge { display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--gold-lt); text-transform: uppercase; letter-spacing: .08em; }
-  .dot-live { width: 6px; height: 6px; border-radius: 50%; background: #4CAF50; animation: pulse 1.5s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-  .cert-inst { font-size: 11px; color: #888; }
-
-  .cert-body {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-top: none;
-    padding: 1.5rem;
-  }
-
-  .coin-row { display: flex; gap: 1.25rem; align-items: flex-start; margin-bottom: 1.25rem; }
-
-  .coin-vis {
-    width: 80px; height: 80px; border-radius: 50%;
-    background: radial-gradient(circle at 33% 33%, #F5D68C, #B8860B 55%, #7A5800);
-    border: 2px solid var(--gold-lt);
-    flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 10px; font-weight: 600; color: #4A3800; text-align: center; line-height: 1.3;
-  }
-
-  .coin-info h2 { font-size: 16px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
-  .coin-info p  { font-size: 13px; color: var(--text2); margin-bottom: 8px; }
-
-  .tag-ok {
-    display: inline-flex; align-items: center; gap: 4px;
-    font-size: 11px; padding: 3px 9px; border-radius: 20px;
-    background: var(--green-bg); color: var(--green-text);
-    border: 1px solid var(--green-border);
-  }
-
-  .divider { border: none; border-top: 1px solid var(--border); margin: 1rem 0; }
-
-  .dgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
-  .dcell {
-    background: var(--bg2); border-radius: var(--radius); padding: 10px 12px;
-    border: 1px solid var(--border);
-  }
-  .dcell .l { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
-  .dcell .v { font-size: 13px; font-weight: 500; color: var(--text); }
-
-  .hash-box {
-    background: var(--bg2); border-radius: var(--radius); padding: 10px 12px;
-    border: 1px solid var(--border); margin-bottom: 1rem;
-  }
-  .hash-code { font-family: 'Courier New', monospace; font-size: 10px; color: var(--text2); word-break: break-all; line-height: 1.6; }
-
-  .owners .l { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
-  .ow-item {
-    display: flex; align-items: center; gap: 10px; padding: 7px 0;
-    border-bottom: 1px solid var(--border); font-size: 12px;
-  }
-  .ow-item:last-child { border-bottom: none; }
-  .av { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; }
-  .ow-name { flex: 1; color: var(--text); }
-  .ow-dt   { color: var(--text2); font-size: 11px; }
-  .ow-p    { font-weight: 500; color: var(--text); font-family: 'Courier New', monospace; }
-
-  .tbk-note {
-    font-size: 12px; background: var(--blue-bg); border: 1px solid var(--blue-border);
-    border-radius: var(--radius); color: var(--blue-text);
-    padding: 9px 12px; margin-bottom: 1rem;
-    display: flex; align-items: flex-start; gap: 8px; line-height: 1.5;
-  }
-
-  .cert-foot {
-    background: var(--bg2); border: 1px solid var(--border); border-top: none;
-    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-    padding: 1rem 1.5rem;
-    display: flex; gap: 8px; flex-wrap: wrap;
-  }
-
-  /* ─────────────────────────────────────────────
-     PANTALLA 4 — FORMULARIO DE PAGO
-  ───────────────────────────────────────────── */
-  .pay-wrap {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-  }
-
-  .pay-head {
-    background: var(--dark2); padding: 1rem 1.5rem;
-    display: flex; align-items: center; gap: 10px;
-  }
-  .pay-head h3 { font-size: 14px; font-weight: 500; color: var(--gold-lt); }
-  .back-btn { background: none; border: none; color: #888; cursor: pointer; font-size: 20px; line-height: 1; padding: 0; }
-
-  .pay-body { padding: 1.5rem; }
-
-  .coin-mini-row {
-    display: flex; align-items: center; gap: 12px;
-    margin-bottom: 1.25rem; padding: 10px 12px;
-    background: var(--bg2); border-radius: var(--radius);
-    border: 1px solid var(--border);
-  }
-  .coin-mini {
-    width: 40px; height: 40px; border-radius: 50%;
-    background: radial-gradient(circle at 33% 33%, #F5D68C, #B8860B 55%, #7A5800);
-    border: 1.5px solid var(--gold-lt); flex-shrink: 0;
-  }
-  .coin-mini-row p    { font-size: 13px; font-weight: 500; color: var(--text); }
-  .coin-mini-row span { font-size: 11px; color: var(--text2); }
-
-  /* Tabs método */
-  .method-tabs { display: flex; gap: 7px; margin-bottom: 1.25rem; }
-  .mtab {
-    flex: 1; padding: 9px 6px; border-radius: var(--radius);
-    border: 1px solid var(--border2); background: var(--bg2);
-    font-size: 12px; cursor: pointer; color: var(--text2);
-    text-align: center; transition: all .15s;
-    display: flex; flex-direction: column; align-items: center; gap: 5px;
-  }
-  .mtab.active { border-color: var(--blue-text); background: var(--blue-bg); color: var(--blue-text); }
-  .mtab svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; }
-
-  /* Inputs */
-  .form-group { margin-bottom: 1rem; }
-  .form-input {
-    width: 100%; padding: 10px 12px; border-radius: var(--radius);
-    border: 1px solid var(--border2);
-    background: var(--bg); color: var(--text); font-size: 14px;
-  }
-  .form-input:focus { outline: none; border-color: var(--blue-text); box-shadow: 0 0 0 3px rgba(24,95,165,.15); }
-
-  .card-row   { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .bank-list  { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1rem; }
-
-  .bank-item {
-    padding: 10px; border-radius: var(--radius);
-    border: 1px solid var(--border2); background: var(--bg2);
-    cursor: pointer; text-align: center; transition: all .15s;
-  }
-  .bank-item.sel { border-color: var(--blue-text); background: var(--blue-bg); }
-  .bank-item .bn { font-size: 12px; font-weight: 500; color: var(--text); }
-  .bank-item .bc { font-size: 10px; color: var(--text2); }
-  .acct-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-
-  /* Resumen */
-  .pay-summary {
-    background: var(--bg2); border-radius: var(--radius);
-    border: 1px solid var(--border); padding: 1rem 1.25rem; margin-bottom: 1rem;
-  }
-  .pay-summary .ps-title { font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: var(--text2); margin-bottom: 9px; }
-  .ps-row { display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0; }
-  .ps-row.total { border-top: 1px solid var(--border); margin-top: 4px; padding-top: 8px; font-weight: 600; font-size: 14px; }
-  .ps-row span:last-child { font-family: 'Courier New', monospace; }
-  .ps-muted { color: var(--text2); }
-
-  .tbk-brand {
-    display: flex; align-items: center; gap: 8px;
-    font-size: 11px; color: var(--text2); margin-bottom: 1rem;
-  }
-  .tbk-logo {
-    background: #E60012; color: #fff;
-    font-size: 10px; font-weight: 700; padding: 3px 8px;
-    border-radius: 4px; letter-spacing: .06em;
-  }
-
-  /* ─────────────────────────────────────────────
-     PANTALLA 5 — PROCESANDO
-  ───────────────────────────────────────────── */
-  .proc-wrap {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: var(--radius-lg); padding: 3rem 1.5rem; text-align: center;
-  }
-  .tbk-logo-big {
-    background: #E60012; color: #fff;
-    font-size: 15px; font-weight: 700; padding: 7px 18px;
-    border-radius: 6px; letter-spacing: .06em;
-    display: inline-block; margin-bottom: 1.5rem;
-  }
-  .proc-steps { list-style: none; max-width: 270px; margin: 1.25rem auto 0; }
-  .proc-steps li {
-    font-size: 12px; color: var(--text2); padding: 6px 0;
-    display: flex; align-items: center; gap: 8px;
-    border-bottom: 1px solid var(--border); transition: color .3s;
-  }
-  .proc-steps li:last-child { border-bottom: none; }
-  .proc-steps li.done { color: var(--text); }
-
-  /* ─────────────────────────────────────────────
-     PANTALLA 6 — ÉXITO
-  ───────────────────────────────────────────── */
-  .ok-wrap {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: var(--radius-lg); padding: 2.5rem 1.5rem; text-align: center;
-  }
-  .ok-icon {
-    width: 64px; height: 64px; border-radius: 50%;
-    background: var(--green-bg); border: 1px solid var(--green-border);
-    margin: 0 auto 1.25rem;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .ok-icon svg { width: 28px; height: 28px; stroke: var(--green-text); fill: none; stroke-width: 2.5; }
-  .ok-folio {
-    font-family: 'Courier New', monospace; font-size: 11px; color: var(--text2);
-    background: var(--bg); padding: 8px 12px;
-    border-radius: var(--radius); border: 1px solid var(--border);
-    margin: 1rem auto; max-width: 320px; word-break: break-all; line-height: 1.7;
-  }
-  .ok-actions { display: flex; gap: 8px; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap; }
+.success-banner{background:#EAF3DE;color:#2E6B0F;padding:12px;border-radius:8px;border:1px solid #8CBF50;margin-bottom:1.5rem;font-size:13px;display:none}
+.qr-box-mock{background:#1A2332;color:#FFF;padding:1.5rem;border-radius:8px;text-align:center;margin-top:1rem;font-family:monospace;font-size:12px}
 </style>
 </head>
 <body>
 
-<div class="app" role="main">
-
-  <!-- ═══════════════════════════════════════════
-       PANTALLA 1 — ESCANEO QR
-  ════════════════════════════════════════════ -->
-  <div id="s1" class="screen active qr-wrap">
-    <p class="lbl" style="text-align:center;margin-bottom:1.25rem">
-      📱 Escanea tu moneda
-    </p>
-    <div class="qr-frame">
-      <div class="scan-bar" id="scanBar"></div>
-      <div class="qr-grid" id="qrGrid"></div>
+<header class="site-header">
+  <div class="nav-inner">
+    <div class="logo-wrap">
+      <div class="logo-coin">MV</div>
+      <div class="logo-text"><strong>MonedaViva</strong><span>Casa Moneda de Chile</span></div>
     </div>
-    <h2 class="qr-title">Moneda Bicentenario 2010</h2>
-    <p class="qr-sub">Escanea el código QR grabado en la moneda<br>para ver su certificado y venderla</p>
-    <button class="btn-dark" onclick="startVerify()">
-      🔍 Simular escaneo
-    </button>
   </div>
+</header>
 
-  <!-- ═══════════════════════════════════════════
-       PANTALLA 2 — VERIFICANDO
-  ════════════════════════════════════════════ -->
-  <div id="s2" class="screen verify-wrap">
-    <div class="spinner"></div>
-    <p style="font-size:16px;font-weight:500;color:var(--text);margin-bottom:.4rem">Verificando autenticidad</p>
-    <p style="font-size:13px;color:var(--text2)">Consultando registro oficial Casa Moneda...</p>
-    <ul class="vsteps">
-      <li id="v1"><span class="step-ico">⏳</span> Leyendo identificador único</li>
-      <li id="v2"><span class="step-ico">⏳</span> Validando en registro oficial</li>
-      <li id="v3"><span class="step-ico">⏳</span> Recuperando historial de propiedad</li>
-      <li id="v4"><span class="step-ico">⏳</span> Generando certificado digital</li>
-    </ul>
+<nav class="main-nav-tabs">
+  <div class="main-tab active" id="tabLinkCatalog" onclick="switchMainView('catalog')">🏪 Catálogo / Comprar</div>
+  <div class="main-tab" id="tabLinkSell" onclick="switchMainView('sell')">📦 Vende tu Colección</div>
+  <div class="main-tab" id="tabLinkVerify" onclick="switchMainView('verify')">🔍 Escanear y Validar QR</div>
+</nav>
+
+<section class="view-section active" id="viewCatalog">
+  <div class="hero">
+    <h1>Portal de Certificación QR Oficial</h1>
+    <p>Verifica la autenticidad institucional e inicia la transferencia regulada de dominio.</p>
   </div>
-
-  <!-- ═══════════════════════════════════════════
-       PANTALLA 3 — CERTIFICADO DIGITAL
-  ════════════════════════════════════════════ -->
-  <div id="s3" class="screen">
-    <!-- Cabecera oscura -->
-    <div class="cert-head">
-      <div class="cert-badge">
-        <div class="dot-live"></div>
-        Autenticidad verificada
+  <div class="prod-grid" id="catalogGrid">
+    <div class="prod-card" onclick="openPrototype('Impreso Conmemorativo: Margot Duhalde', '$12.990', 'Ana María Prado', 'Papel de Seguridad')">
+      <div class="prod-img">
+        <img src="image_129428.jpg" alt="Margot Duhalde">
+        <span class="prod-tag">Colección Privada</span>
       </div>
-      <span class="cert-inst">Casa Moneda de Chile · oficial</span>
+      <div class="prod-info">
+        <h3>Impreso Conmemorativo: Margot Duhalde</h3>
+        <p>Propietario original vende esta pieza con dístico oficial ilustrado y trazabilidad integrada.</p>
+        <div class="prod-qr-status">📱 QR Verificado: Certificación de Origen Activa</div>
+        <div class="prod-footer">
+          <div class="prod-price">$12.990 <span>CLP</span></div>
+          <button class="btn-ver">Ver y Adquirir</button>
+        </div>
+      </div>
     </div>
+  </div>
+</section>
 
-    <!-- Cuerpo -->
-    <div class="cert-body">
-      <!-- Moneda + info -->
+<section class="view-section" id="viewSell">
+  <div class="hero">
+    <h1>Publica y Certifica tu Pieza</h1>
+    <p>Sube tu coleccionable al marketplace. El sistema le asignará una firma y un QR inalterable.</p>
+  </div>
+  <div class="form-card">
+    <div class="success-banner" id="sellSuccessBanner">✓ ¡Tu pieza se ha registrado con éxito! El ítem ya está visible en el Catálogo.</div>
+    
+    <label class="f-lbl">Nombre de tu Coleccionable</label>
+    <input type="text" id="formTitle" class="f-inp" placeholder="Ej: Billete Conmemorativo Margot Duhalde Especial">
+
+    <label class="f-lbl">Precio de Venta (CLP)</label>
+    <input type="number" id="formPrice" class="f-inp" placeholder="12990">
+
+    <label class="f-lbl">Tu Nombre Completo (Vendedor)</label>
+    <input type="text" id="formSeller" class="f-inp" value="Carlos Mendoza Fuentes">
+
+    <label class="f-lbl">Estado Físico de la Pieza</label>
+    <input type="text" id="formCondition" class="f-inp" value="Perfecto Estado (Mint)">
+
+    <label class="f-lbl">Descripción Adicional</label>
+    <textarea id="formDesc" class="f-txt" placeholder="Describe el estado de conservación..."></textarea>
+
+    <button class="btn-confirm" onclick="executePublish()">Generar Firma y Publicar en Marketplace</button>
+
+    <div id="qrOutputBlock" style="display:none; margin-top:1.5rem;">
+      <label class="f-lbl">Etiqueta QR Antifraude generado:</label>
+      <div class="qr-box-mock">
+        ■■■■■■■■■■■■■■■■■<br>
+        ■■  MONEDAVIVA  ■■<br>
+        ■■  CERT-TRACE  ■■<br>
+        ■■■■■■■■■■■■■■■■■<br>
+        <span style="font-size:10px; color:var(--gold-lt);" id="lblNewId">ID: ITEM-49122</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="view-section" id="viewVerify">
+  <div class="hero">
+    <h1>Módulo de Escaneo e Historial</h1>
+    <p>Audita la autenticidad real de la pieza. Contrasta que los datos coincidan.</p>
+  </div>
+  <div class="scan-container">
+    <div class="scan-header">
+      <span id="scanStatusBadge">🛡️ CERTIFICADO DE AUTENTICIDAD ACTIVO</span>
+      <span style="font-size:12px; font-family:monospace;" id="scanCertCode">ID: CERT-2026-X992</span>
+    </div>
+    <div class="scan-body">
       <div class="coin-row">
-        <div class="coin-vis">Chile<br>$200<br>2010</div>
-        <div class="coin-info">
-          <h2>Moneda Bicentenario 2010</h2>
-          <p>$200 · Cobre-Níquel · Edición limitada</p>
-          <span class="tag-ok">✓ Auténtica</span>
-        </div>
-      </div>
-
-      <hr class="divider">
-
-      <!-- Grid de datos -->
-      <div class="dgrid">
-        <div class="dcell">
-          <div class="l">N° de serie</div>
-          <div class="v" style="font-family:'Courier New',monospace;font-size:11px">CM-2010-00847</div>
-        </div>
-        <div class="dcell">
-          <div class="l">Fecha acuñación</div>
-          <div class="v">14 Sep 2010</div>
-        </div>
-        <div class="dcell">
-          <div class="l">Composición</div>
-          <div class="v">Cu 75% · Ni 25%</div>
-        </div>
-        <div class="dcell">
-          <div class="l">Tirada total</div>
-          <div class="v">50.000 unidades</div>
-        </div>
-        <div class="dcell">
-          <div class="l">Valor de mercado</div>
-          <div class="v">$38.500 CLP</div>
-        </div>
-        <div class="dcell">
-          <div class="l">N° certificado</div>
-          <div class="v" style="font-family:'Courier New',monospace;font-size:11px">CERT-4721</div>
-        </div>
-      </div>
-
-      <!-- Hash -->
-      <div class="hash-box">
-        <div class="l">Código de autenticidad (registro oficial)</div>
-        <div class="hash-code">CM2010-847-AUTH-3A7F8B2C1D9E4F6A0B5C8D2E7F1A3B6C9D0E2F</div>
-      </div>
-
-      <!-- Historial de propietarios -->
-      <div class="owners" style="margin-bottom:1rem">
-        <div class="l">Historial de propietarios</div>
-        <div class="ow-item">
-          <div class="av" style="background:#E6F1FB;color:#185FA5">CM</div>
-          <span class="ow-name">Casa Moneda de Chile <span style="font-size:10px;color:var(--text2)">(origen)</span></span>
-          <span class="ow-dt">Sep 2010</span>
-        </div>
-        <div class="ow-item">
-          <div class="av" style="background:#EEEDFE;color:#534AB7">RP</div>
-          <span class="ow-name">Roberto Pérez</span>
-          <span class="ow-dt">Mar 2018</span>
-          <span class="ow-p">$18.000</span>
-        </div>
-        <div class="ow-item">
-          <div class="av" style="background:#E1F5EE;color:#0F6E56">TÚ</div>
-          <span class="ow-name">Tú <span style="font-size:10px;color:var(--text2)">(propietario actual)</span></span>
-          <span class="ow-dt">Ene 2024</span>
-          <span class="ow-p">$25.000</span>
-        </div>
-      </div>
-
-      <!-- Nota Transbank -->
-      <div class="tbk-note">
-        ℹ️
-        <span>Al vender tu moneda, el cobro al comprador se procesa vía <strong>Webpay Plus (Transbank)</strong>. El pago llega directo a tu cuenta bancaria en 24–48 hrs hábiles.</span>
-      </div>
-    </div>
-
-    <!-- Footer de acciones -->
-    <div class="cert-foot">
-      <button class="btn-sec" onclick="alert('En producción: enlace a documentación técnica de la integración.')">
-        ❓ Cómo funciona
-      </button>
-      <button class="btn-gold" onclick="showPay()">
-        💳 Vender mi moneda
-      </button>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════════
-       PANTALLA 4 — FORMULARIO DE PAGO
-  ════════════════════════════════════════════ -->
-  <div id="s4" class="screen pay-wrap">
-    <div class="pay-head">
-      <button class="back-btn" onclick="goBack()" aria-label="Volver">←</button>
-      <h3>Vender moneda · Cobro al comprador</h3>
-    </div>
-
-    <div class="pay-body">
-      <!-- Resumen de la pieza -->
-      <div class="coin-mini-row">
-        <div class="coin-mini"></div>
+        <div class="cert-vis-img"><img src="image_129428.jpg" alt="Duhalde"></div>
         <div>
-          <p>Moneda Bicentenario 2010</p>
-          <span>CM-2010-00847 · CERT-4721</span>
+          <h2 id="scanTitle">Impreso Conmemorativo: Margot Duhalde</h2>
+          <p style="font-size:13px; color:var(--text2)">Propietario / Vendedor Actual: <strong id="scanSellerName">Ana María Prado</strong></p>
+          <span class="tag-auth" style="margin-top:5px;">✓ Integridad de Datos Validada en Blockchain</span>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="dgrid">
+        <div class="dcell"><div class="l">Precio Transacción</div><div class="v" id="scanPrice">$12.990 CLP</div></div>
+        <div class="dcell"><div class="l">Estado de Conservación</div><div class="v" id="scanCondition">Papel de Seguridad</div></div>
+      </div>
+      <h3 style="font-size:14px; margin-top:1.5rem; color:var(--navy);">📜 Trazabilidad e Historial Inmutable:</h3>
+      <div class="timeline" id="scanTimeline"></div>
+    </div>
+  </div>
+</section>
+
+<div class="modal-overlay" id="modalPrototype">
+  <div class="modal-box">
+    <div class="m-head">
+      <div class="m-badge"><div class="live-dot"></div> MonedaViva Blockchain QR</div>
+      <button class="m-close" onclick="closeModal()">&times;</button>
+    </div>
+
+    <div class="proto-screen active" id="screenDetail">
+      <div class="coin-row">
+        <div class="cert-vis-img"><img src="image_129428.jpg" alt="Duhalde"></div>
+        <div class="cert-info">
+          <h2 id="modalTitle">Impreso Conmemorativo: Margot Duhalde</h2>
+          <p>Vendedor: <strong id="modalSeller">Ana María Prado</strong></p>
+          <span class="tag-auth">✓ Firma Criptográfica Verificada</span>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="dgrid">
+        <div class="dcell"><div class="l">Soporte Material</div><div class="v" id="modalCondition">Papel de Seguridad</div></div>
+        <div class="dcell"><div class="l">Entidad Emisora</div><div class="v">Casa de Moneda S.A.</div></div>
+      </div>
+      <button class="btn-confirm" id="btnDetailAction" onclick="changeScreen('screenPayment')">Iniciar Adquisición ($12.990)</button>
+    </div>
+
+    <div class="proto-screen" id="screenPayment">
+      <label class="f-lbl">Nombre del adquirente</label>
+      <input type="text" id="buyerName" class="f-inp" value="Ana María Prado">
+      <label class="f-lbl">RUT Identificador</label>
+      <input type="text" id="buyerRut" class="f-inp" value="15.662.341-K">
+
+      <label class="f-lbl">Logística y Custodia Física</label>
+      <div class="radio-group">
+        <div class="radio-box active" id="rBox1" onclick="setShipping('owner')">
+          <input type="radio" id="shipOwner" name="shippingMethod" checked>
+          <div class="radio-txt">
+            <h4>El dueño anterior realiza el envío</h4>
+            <p>Acuerdo de logística directo, privado y descentralizado.</p>
+          </div>
+        </div>
+        <div class="radio-box" id="rBox2" onclick="setShipping('casamoneda')">
+          <input type="radio" id="shipCasa" name="shippingMethod">
+          <div class="radio-txt">
+            <h4>Delegar custodia a Casa de Moneda</h4>
+            <p>La institución centraliza la entrega cobrando coste base técnico.</p>
+          </div>
         </div>
       </div>
 
-      <!-- Precio de venta -->
-      <div class="form-group">
-        <label class="lbl" for="sellPrice">Precio de venta (CLP)</label>
-        <input id="sellPrice" class="form-input" type="number" value="38500" oninput="updateSummary()">
+      <label class="f-lbl">Medio de Pago Seguro</label>
+      <div class="mtabs">
+        <div class="mtab active" id="tab-tbk" onclick="selectMethod('tbk')">Transbank</div>
+        <div class="mtab" id="tab-transfer" onclick="selectMethod('transfer')">Transferencia</div>
       </div>
 
-      <!-- Selector de método de pago -->
-      <label class="lbl">Método de pago del comprador</label>
-      <div class="method-tabs">
-        <div class="mtab active" id="tab-webpay" onclick="setMethod('webpay')">
-          <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-          <span>Webpay / Débito</span>
-        </div>
-        <div class="mtab" id="tab-transfer" onclick="setMethod('transfer')">
-          <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><polyline points="8 8 3 12 8 16"/><path d="M21 12V7a2 2 0 0 0-2-2H5"/></svg>
-          <span>Transferencia</span>
-        </div>
-        <div class="mtab" id="tab-mach" onclick="setMethod('mach')">
-          <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-linecap="round"/></svg>
-          <span>MACH / Prepago</span>
-        </div>
-      </div>
-
-      <!-- ── FORM WEBPAY ── -->
-      <div id="form-webpay">
-        <div class="form-group">
-          <label class="lbl" for="cardNum">Número de tarjeta</label>
-          <input id="cardNum" class="form-input" type="text" placeholder="•••• •••• •••• ••••" maxlength="19" oninput="fmtCard(this)">
-        </div>
+      <div id="panel-tbk" class="card-wrapper">
+        <label class="f-lbl" style="font-size:10px;">Número de Tarjeta</label>
+        <input type="text" class="f-inp" value="4513 9982 4115 6320" style="margin-bottom:0.8rem;">
         <div class="card-row">
-          <div class="form-group">
-            <label class="lbl" for="cardExp">Vencimiento</label>
-            <input id="cardExp" class="form-input" type="text" placeholder="MM/AA" maxlength="5" oninput="fmtExp(this)">
-          </div>
-          <div class="form-group">
-            <label class="lbl" for="cardCvv">CVV</label>
-            <input id="cardCvv" class="form-input" type="text" placeholder="•••" maxlength="3">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="lbl" for="cardName">Nombre en la tarjeta</label>
-          <input id="cardName" class="form-input" type="text" placeholder="NOMBRE APELLIDO">
+          <div><label class="f-lbl" style="font-size:10px;">Vencimiento</label><input type="text" class="f-inp" value="08/29" style="margin-bottom:0;"></div>
+          <div><label class="f-lbl" style="font-size:10px;">CVV</label><input type="password" class="f-inp" value="441" style="margin-bottom:0;"></div>
         </div>
       </div>
+      <div id="desc-transfer" class="method-desc">🏛️ Cuenta Corriente Banco de Chile Nº 99-1205-01. Resguardo institucional interino.</div>
 
-      <!-- ── FORM TRANSFERENCIA ── -->
-      <div id="form-transfer" style="display:none">
-        <label class="lbl">Banco del comprador</label>
-        <div class="bank-list" id="bankList">
-          <div class="bank-item sel" onclick="selBank(this)"><div class="bn">Banco de Chile</div><div class="bc">Transferencia directa</div></div>
-          <div class="bank-item" onclick="selBank(this)"><div class="bn">BancoEstado</div><div class="bc">Transferencia directa</div></div>
-          <div class="bank-item" onclick="selBank(this)"><div class="bn">Santander</div><div class="bc">Transferencia directa</div></div>
-          <div class="bank-item" onclick="selBank(this)"><div class="bn">BCI</div><div class="bc">Transferencia directa</div></div>
-          <div class="bank-item" onclick="selBank(this)"><div class="bn">Scotiabank</div><div class="bc">Transferencia directa</div></div>
-          <div class="bank-item" onclick="selBank(this)"><div class="bn">Itaú</div><div class="bc">Transferencia directa</div></div>
-        </div>
-        <div class="acct-row">
-          <div class="form-group">
-            <label class="lbl" for="rut">RUT del comprador</label>
-            <input id="rut" class="form-input" type="text" placeholder="12.345.678-9" oninput="fmtRut(this)">
-          </div>
-          <div class="form-group">
-            <label class="lbl" for="acctNum">N° de cuenta</label>
-            <input id="acctNum" class="form-input" type="text" placeholder="000000000">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="lbl" for="email">Email del comprador</label>
-          <input id="email" class="form-input" type="email" placeholder="comprador@email.com">
-        </div>
+      <button class="btn-confirm" onclick="processPayment()">Pagar y Confirmar Traspaso</button>
+    </div>
+
+    <div class="proto-screen" id="screenProcessing">
+      <div class="proc-wrap">
+        <div class="spinner"></div>
+        <h3 id="processingTitle">Autorizando Transacción...</h3>
       </div>
+    </div>
 
-      <!-- ── FORM MACH ── -->
-      <div id="form-mach" style="display:none">
-        <div class="form-group">
-          <label class="lbl" for="machPhone">Teléfono o alias MACH del comprador</label>
-          <input id="machPhone" class="form-input" type="text" placeholder="+56 9 1234 5678 o @usuario">
-        </div>
-        <p style="font-size:12px;color:var(--text2);margin-top:-6px;margin-bottom:1rem;line-height:1.5">
-          El comprador recibirá una notificación push en su app MACH / BancoEstado para confirmar el pago.
-        </p>
+    <div class="proto-screen" id="screenSuccess">
+      <div class="ok-wrap">
+        <div class="ok-circle">✓</div>
+        <h2>¡Propiedad Registrada!</h2>
+        <div class="ok-folio">Folio Registro:<br><strong id="folioCode">CMMC-9002-2026</strong></div>
+        <button class="btn-pdf" onclick="generateOfficialPDF()">📄 Descargar Certificado (PDF)</button>
       </div>
-
-      <!-- Resumen de la transacción -->
-      <div class="pay-summary">
-        <p class="ps-title">📋 Resumen de la transacción</p>
-        <div class="ps-row"><span>Precio de venta</span><span id="ps-total">$38.500</span></div>
-        <div class="ps-row"><span class="ps-muted">Comisión Transbank (1,99%)</span><span id="ps-tbk" class="ps-muted">- $766</span></div>
-        <div class="ps-row"><span class="ps-muted">Cargo plataforma Casa Moneda (2%)</span><span id="ps-cm" class="ps-muted">- $770</span></div>
-        <div class="ps-row total"><span>Recibes en tu cuenta</span><span id="ps-you">$36.964</span></div>
-      </div>
-
-      <!-- Marca Transbank -->
-      <div class="tbk-brand">
-        <div class="tbk-logo">Transbank</div>
-        <span>Pago procesado con seguridad por Transbank · SSL 256-bit · PCI DSS</span>
-      </div>
-
-      <button class="confirm-btn" onclick="procesar()">
-        🔒 Confirmar y cobrar al comprador
-      </button>
     </div>
   </div>
+</div>
 
-  <!-- ═══════════════════════════════════════════
-       PANTALLA 5 — PROCESANDO
-  ════════════════════════════════════════════ -->
-  <div id="s5" class="screen proc-wrap">
-    <div class="tbk-logo-big">Transbank</div>
-    <div class="spinner"></div>
-    <p style="font-size:16px;font-weight:500;color:var(--text);margin-bottom:.4rem">Procesando pago</p>
-    <p style="font-size:12px;color:var(--text2)">Comunicando con servidor Transbank...</p>
-    <ul class="proc-steps">
-      <li id="p1"><span>⏳</span> Iniciando sesión de pago segura</li>
-      <li id="p2"><span>⏳</span> Autorizando con el banco emisor</li>
-      <li id="p3"><span>⏳</span> Generando orden de liquidación</li>
-      <li id="p4"><span>⏳</span> Actualizando certificado digital</li>
-    </ul>
-  </div>
+<div class="pdf-toast" id="toast">Documento PDF generado con éxito</div>
 
-  <!-- ═══════════════════════════════════════════
-       PANTALLA 6 — ÉXITO
-  ════════════════════════════════════════════ -->
-  <div id="s6" class="screen ok-wrap">
-    <div class="ok-icon">
-      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-    </div>
-    <h2 style="font-size:18px;font-weight:500;color:var(--text);margin-bottom:.4rem">¡Venta completada!</h2>
-    <p style="font-size:14px;color:var(--text2);margin-bottom:.25rem">El pago fue procesado por Transbank exitosamente.</p>
-    <p style="font-size:13px;color:var(--text2)">
-      Recibirás <strong id="ok-amount">$36.964</strong> en tu cuenta bancaria en <strong>24–48 hrs hábiles</strong>.
-    </p>
-    <div class="ok-folio" id="ok-folio">
-      Folio Transbank: TBK-2024-00847-X<br>
-      Código auth: 123456 · Webpay Plus
-    </div>
-    <p style="font-size:12px;color:var(--text2);margin-top:.75rem">
-      El certificado digital de la moneda fue actualizado con el nuevo propietario.
-    </p>
-    <div class="ok-actions">
-      <button class="btn-sec" onclick="restart()">🔄 Nueva consulta</button>
-      <button class="btn-sec" onclick="alert('En producción: redirige a documentación de integración Transbank Webpay Plus.')">
-        Integrar en producción
-      </button>
-    </div>
-  </div>
-
-</div><!-- /app -->
-
-<!-- ═══════════════════════════════════════════════
-     JAVASCRIPT
-════════════════════════════════════════════════ -->
 <script>
-/* ── QR decorativo ── */
-const QR_PAT = [
-  1,1,1,0,1,1,1,
-  1,0,1,0,0,0,1,
-  1,1,1,0,1,1,1,
-  1,0,0,1,0,0,0,
-  0,1,1,0,1,1,1,
-  0,0,0,1,0,1,1,
-  1,0,1,1,0,1,0
-];
-(function buildQR() {
-  const g = document.getElementById('qrGrid');
-  QR_PAT.forEach(v => {
-    const s = document.createElement('span');
-    s.style.opacity = v ? '1' : '0';
-    g.appendChild(s);
-  });
-})();
+  let selectedMethodName = "Transbank Webpay Plus";
+  let selectedShippingLabel = "El dueño anterior realiza el envío de forma directa";
+  
+  let currentActiveItem = {
+    title: "Impreso Conmemorativo: Margot Duhalde",
+    price: "$12.990",
+    seller: "Ana María Prado",
+    condition: "Papel de Seguridad",
+    certCode: "CERT-2026-X992"
+  };
 
-/* ── Navegación entre pantallas ── */
-function show(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-/* ── Animación de pasos con íconos ── */
-function animateSteps(prefix, count, base, cb) {
-  for (let i = 1; i <= count; i++) {
-    const delay = base + (i - 1) * 600;
-    setTimeout(() => {
-      const li = document.getElementById(prefix + i);
-      if (!li) return;
-      li.querySelector('span').textContent = '✓';
-      li.classList.add('done');
-      if (i === count && cb) cb();
-    }, delay);
+  function switchMainView(viewId) {
+    document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
+    if(viewId === 'catalog') {
+      document.getElementById('viewCatalog').classList.add('active');
+      document.getElementById('tabLinkCatalog').classList.add('active');
+    } else if(viewId === 'sell') {
+      document.getElementById('viewSell').classList.add('active');
+      document.getElementById('tabLinkSell').classList.add('active');
+    } else if(viewId === 'verify') {
+      document.getElementById('viewVerify').classList.add('active');
+      document.getElementById('tabLinkVerify').classList.add('active');
+      loadVerifyView();
+    }
   }
-}
 
-/* ── S1 → S2 → S3 ── */
-function startVerify() {
-  show('s2');
-  animateSteps('v', 4, 500, () => setTimeout(() => show('s3'), 500));
-}
-
-/* ── S3 → S4 ── */
-function showPay() { show('s4'); }
-
-/* ── S4 → S3 ── */
-function goBack() { show('s3'); }
-
-/* ── Formateo de moneda CLP ── */
-function fmt(n) {
-  return '$' + Math.round(n).toLocaleString('es-CL');
-}
-
-/* ── Actualiza resumen de precios ── */
-function updateSummary() {
-  const price = parseFloat(document.getElementById('sellPrice').value) || 0;
-  const tbk   = price * 0.0199;
-  const cm    = price * 0.02;
-  const you   = price - tbk - cm;
-  document.getElementById('ps-total').textContent = fmt(price);
-  document.getElementById('ps-tbk').textContent   = '- ' + fmt(tbk);
-  document.getElementById('ps-cm').textContent    = '- ' + fmt(cm);
-  document.getElementById('ps-you').textContent   = fmt(you);
-}
-
-/* ── Tabs de método de pago ── */
-let method = 'webpay';
-const methodLabels = { webpay: 'Webpay Plus', transfer: 'Transferencia bancaria', mach: 'MACH / BancoEstado' };
-
-function setMethod(m) {
-  method = m;
-  ['webpay', 'transfer', 'mach'].forEach(k => {
-    document.getElementById('tab-' + k).classList.toggle('active', k === m);
-    document.getElementById('form-' + k).style.display = k === m ? 'block' : 'none';
-  });
-}
-
-/* ── Selección de banco ── */
-function selBank(el) {
-  document.querySelectorAll('.bank-item').forEach(b => b.classList.remove('sel'));
-  el.classList.add('sel');
-}
-
-/* ── Formateo tarjeta ── */
-function fmtCard(el) {
-  let v = el.value.replace(/\D/g, '').substring(0, 16);
-  el.value = v.replace(/(.{4})/g, '$1 ').trim();
-}
-function fmtExp(el) {
-  let v = el.value.replace(/\D/g, '');
-  if (v.length >= 2) v = v.substring(0, 2) + '/' + v.substring(2, 4);
-  el.value = v;
-}
-
-/* ── Formateo RUT chileno ── */
-function fmtRut(el) {
-  let v = el.value.replace(/[^0-9kK]/g, '').toUpperCase();
-  if (v.length > 1) {
-    const dv   = v.slice(-1);
-    let   body = v.slice(0, -1).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    v = body + '-' + dv;
+  function openPrototype(title, price, seller, condition) {
+    currentActiveItem.title = title; currentActiveItem.price = price; currentActiveItem.seller = seller; currentActiveItem.condition = condition;
+    document.getElementById('modalTitle').innerText = title;
+    document.getElementById('modalSeller').innerText = seller;
+    document.getElementById('modalCondition').innerText = condition;
+    document.getElementById('btnDetailAction').innerText = "Iniciar Adquisición (" + price + ")";
+    document.getElementById('modalPrototype').classList.add('open');
+    changeScreen('screenDetail');
   }
-  el.value = v;
-}
 
-/* ── S4 → S5 → S6 ── */
-function procesar() {
-  show('s5');
-  animateSteps('p', 4, 400, () => {
-    setTimeout(() => {
-      const price   = parseFloat(document.getElementById('sellPrice').value) || 38500;
-      const you     = price - price * 0.0199 - price * 0.02;
-      const folio   = 'TBK-2024-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0') + '-X';
-      const auth    = String(Math.floor(Math.random() * 900000) + 100000);
-      document.getElementById('ok-amount').textContent = fmt(you);
-      document.getElementById('ok-folio').innerHTML =
-        'Folio Transbank: ' + folio + '<br>Código auth: ' + auth + ' · ' + methodLabels[method];
-      show('s6');
-    }, 400);
-  });
-}
+  function closeModal() { document.getElementById('modalPrototype').classList.remove('open'); }
+  function changeScreen(id) {
+    document.querySelectorAll('.proto-screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
 
-/* ── Reiniciar ── */
-function restart() { show('s1'); }
+  function setShipping(type) {
+    document.getElementById('rBox1').classList.remove('active'); document.getElementById('rBox2').classList.remove('active');
+    if(type === 'owner') {
+      document.getElementById('rBox1').classList.add('active'); document.getElementById('shipOwner').checked = true;
+      selectedShippingLabel = "El dueño anterior realiza el envío de forma directa (Acuerdo privado)";
+    } else {
+      document.getElementById('rBox2').classList.add('active'); document.getElementById('shipCasa').checked = true;
+      selectedShippingLabel = "Delegado a Casa de Moneda de Chile (Logística Centralizada)";
+    }
+  }
+
+  function selectMethod(method) {
+    document.querySelectorAll('.mtab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.method-desc').forEach(d => d.classList.remove('active'));
+    document.getElementById('panel-tbk').style.display = 'none';
+    document.getElementById('tab-' + method).classList.add('active');
+
+    if(method === 'tbk') {
+      document.getElementById('panel-tbk').style.display = 'block'; selectedMethodName = "Transbank Webpay Plus";
+    } else if(method === 'transfer') {
+      document.getElementById('desc-transfer').classList.add('active'); selectedMethodName = "Transferencia Bancaria";
+    }
+  }
+
+  function processPayment() {
+    document.getElementById('processingTitle').innerText = "Conectando con " + selectedMethodName + "...";
+    changeScreen('screenProcessing');
+    setTimeout(() => { 
+      currentActiveItem.historyAdded = "Propiedad transferida a " + document.getElementById('buyerName').value + " via " + selectedMethodName;
+      changeScreen('screenSuccess'); 
+    }, 1200);
+  }
+
+  function executePublish() {
+    const t = document.getElementById('formTitle').value || "Coleccionable Especial";
+    const p = document.getElementById('formPrice').value || "12990";
+    const s = document.getElementById('formSeller').value || "Carlos Mendoza";
+    const c = document.getElementById('formCondition').value || "Buen Estado";
+    const d = document.getElementById('formDesc').value || "Sin descripción";
+    const randId = "ITEM-" + Math.floor(10000 + Math.random() * 90000);
+    const randCert = "CERT-2026-" + Math.floor(1000 + Math.random() * 9000);
+
+    currentActiveItem = { title: t, price: "$" + parseInt(p).toLocaleString('es-CL'), seller: s, condition: c, certCode: randCert, desc: d };
+
+    const grid = document.getElementById('catalogGrid');
+    const card = document.createElement('div');
+    card.className = "prod-card";
+    card.onclick = function() { openPrototype(t, "$" + parseInt(p).toLocaleString('es-CL'), s, c); };
+    card.innerHTML = `
+      <div class="prod-img"><img src="image_129428.jpg" alt="Img"><span class="prod-tag">Colección de \${s}</span></div>
+      <div class="prod-info">
+        <h3>\${t}</h3><p>\${d}</p><div class="prod-qr-status">📱 QR Verificado: Certificado Activo</div>
+        <div class="prod-footer"><div class="prod-price">\${"$" + parseInt(p).toLocaleString('es-CL')} <span>CLP</span></div><button class="btn-ver">Ver y Adquirir</button></div>
+      </div>`;
+    grid.insertBefore(card, grid.firstChild);
+
+    document.getElementById('lblNewId').innerText = "ID: " + randId + " / " + randCert;
+    document.getElementById('qrOutputBlock').style.display = "block";
+    document.getElementById('sellSuccessBanner').style.display = "block";
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+
+  function loadVerifyView() {
+    document.getElementById('scanTitle').innerText = currentActiveItem.title;
+    document.getElementById('scanSellerName').innerText = currentActiveItem.seller;
+    document.getElementById('scanPrice').innerText = currentActiveItem.price;
+    document.getElementById('scanCondition').innerText = currentActiveItem.condition;
+    document.getElementById('scanCertCode').innerText = "ID: " + currentActiveItem.certCode;
+
+    const timeline = document.getElementById('scanTimeline');
+    timeline.innerHTML = `
+      <div class="timeline-item">
+        <div class="timeline-title">Firma de Registro Inicial de Colección</div>
+        <div class="timeline-date">Registrado por \${currentActiveItem.seller}</div>
+        <div class="timeline-desc">Firma criptográfica auditada.</div>
+      </div>`;
+    if(currentActiveItem.historyAdded) {
+      timeline.innerHTML += `
+        <div class="timeline-item">
+          <div class="timeline-title">Traspaso Legal de Dominio</div>
+          <div class="timeline-date">MonedaViva Blockchain - Hoy</div>
+          <div class="timeline-desc">\${currentActiveItem.historyAdded}. Fondos en resguardo técnico.</div>
+        </div>`;
+    }
+  }
+
+  function generateOfficialPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const buyer = document.getElementById('buyerName').value;
+    const rut = document.getElementById('buyerRut').value;
+
+    doc.setFillColor(11, 31, 58); doc.rect(0, 0, 210, 40, 'F');
+    doc.setTextColor(255, 255, 255); doc.setFont("Helvetica", "bold"); doc.setFontSize(22);
+    doc.text("CASA MONEDA DE CHILE", 20, 25);
+    
+    doc.setTextColor(11, 31, 58); doc.setFontSize(14); doc.text("CERTIFICADO OFICIAL DE ADQUISICIÓN Y DOMINIO DIGITAL", 20, 58);
+    doc.setFont("Helvetica", "normal"); doc.setFontSize(10);
+    doc.text("• Pieza Numismatica:   " + currentActiveItem.title, 24, 82);
+    doc.text("• Vendedor Cedente:    " + currentActiveItem.seller, 24, 89);
+    doc.text("• Adquirente Legal:    " + buyer + " (" + rut + ")", 24, 96);
+    doc.text("• Logistica Fisica:    " + selectedShippingLabel, 24, 103);
+    doc.text("• Codigo Registro:     " + currentActiveItem.certCode, 24, 110);
+
+    doc.save("Certificado-" + currentActiveItem.title.replace(/ /g, "-") + ".pdf");
+    const toast = document.getElementById('toast'); toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+  }
 </script>
-
 </body>
 </html>
